@@ -5,7 +5,9 @@ extern crate nalgebra as na;
 use std::fs::File;
 use na::{DMatrix, Vector2};
 
-fn load(filename: &'static str) -> na::Matrix<f64, na::Dynamic, na::Dynamic, na::MatrixVec<f64, na::Dynamic, na::Dynamic>> {
+fn load(
+    filename: &'static str,
+) -> na::Matrix<f64, na::Dynamic, na::Dynamic, na::MatrixVec<f64, na::Dynamic, na::Dynamic>> {
     let file = File::open(filename).expect("Blur blur");
     let mut rdr = csv::ReaderBuilder::new()
         .has_headers(false)
@@ -28,13 +30,9 @@ fn load(filename: &'static str) -> na::Matrix<f64, na::Dynamic, na::Dynamic, na:
         row_count += 1;
     }
 
-    // Use this rather than from_iterator because this assumes row major 
+    // Use this rather than from_iterator because this assumes row major
     // rather than column major orientation of all_vals
-    let dmatrix = DMatrix::from_row_slice(
-        row_count,
-        col_count,
-        &all_vals
-    );
+    let dmatrix = DMatrix::from_row_slice(row_count, col_count, &all_vals);
 
     return dmatrix;
 }
@@ -49,10 +47,10 @@ fn sum(vec: na::Matrix<f64, na::Dynamic, na::U1, na::MatrixVec<f64, na::Dynamic,
 }
 
 fn compute_cost(
-        X: &na::Matrix<f64, na::Dynamic, na::U2, na::MatrixVec<f64, na::Dynamic, na::U2>>,
-        y: &na::Matrix<f64, na::Dynamic, na::U1, na::MatrixVec<f64, na::Dynamic, na::U1>>,
-        theta: &na::Matrix<f64, na::U2, na::U1, na::MatrixArray<f64, na::U2, na::U1>>) -> f64 {
-
+    X: &na::Matrix<f64, na::Dynamic, na::U2, na::MatrixVec<f64, na::Dynamic, na::U2>>,
+    y: &na::Matrix<f64, na::Dynamic, na::U1, na::MatrixVec<f64, na::Dynamic, na::U1>>,
+    theta: &na::Matrix<f64, na::U2, na::U1, na::MatrixArray<f64, na::U2, na::U1>>,
+) -> f64 {
     let m = y.len();
     let scalar = 1.0 / (2.0 * m as f64);
     let prod = X * theta;
@@ -65,8 +63,8 @@ fn compute_cost(
 
 fn power(
     mut vec: na::Matrix<f64, na::Dynamic, na::U1, na::MatrixVec<f64, na::Dynamic, na::U1>>,
-    exp: i32) -> na::Matrix<f64, na::Dynamic, na::U1, na::MatrixVec<f64, na::Dynamic, na::U1>> {
-
+    exp: i32,
+) -> na::Matrix<f64, na::Dynamic, na::U1, na::MatrixVec<f64, na::Dynamic, na::U1>> {
     for ind in 0..vec.len() {
         vec[ind] = vec[ind].powi(exp);
     }
@@ -74,14 +72,13 @@ fn power(
     return vec;
 }
 
-
 fn gradient_descent(
-        X: &na::Matrix<f64, na::Dynamic, na::U2, na::MatrixVec<f64, na::Dynamic, na::U2>>,
-        y: &na::Matrix<f64, na::Dynamic, na::U1, na::MatrixVec<f64, na::Dynamic, na::U1>>,
-        theta: na::Matrix<f64, na::U2, na::U1, na::MatrixArray<f64, na::U2, na::U1>>,
-        alpha: f64,
-        iterations: i32) -> na::Matrix<f64, na::U2, na::U1, na::MatrixArray<f64, na::U2, na::U1>> {
-
+    X: &na::Matrix<f64, na::Dynamic, na::U2, na::MatrixVec<f64, na::Dynamic, na::U2>>,
+    y: &na::Matrix<f64, na::Dynamic, na::U1, na::MatrixVec<f64, na::Dynamic, na::U1>>,
+    theta: na::Matrix<f64, na::U2, na::U1, na::MatrixArray<f64, na::U2, na::U1>>,
+    alpha: f64,
+    iterations: i32,
+) -> na::Matrix<f64, na::U2, na::U1, na::MatrixArray<f64, na::U2, na::U1>> {
     let m = y.len();
     let scalar = 1.0 / m as f64;
     // Vectorized gradient calculation
@@ -91,7 +88,7 @@ fn gradient_descent(
     let mut update;
     for _i in 0..iterations {
         prod = X * learned_theta;
-        grad = scalar * (X.transpose() * (prod - y) );
+        grad = scalar * (X.transpose() * (prod - y));
         update = alpha * grad;
         learned_theta = learned_theta - update;
     }
