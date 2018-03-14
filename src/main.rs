@@ -37,6 +37,8 @@ fn load(
     return dmatrix;
 }
 
+// TODO: Find a way to make this use more generic types
+// Tried: <T>, <T: Iterator>, <T: IntoIterator>, <T: Iterator<Item = f64>>
 fn sum(vec: na::Matrix<f64, na::Dynamic, na::U1, na::MatrixVec<f64, na::Dynamic, na::U1>>) -> f64 {
     let mut total = 0.0;
     for val in vec.iter() {
